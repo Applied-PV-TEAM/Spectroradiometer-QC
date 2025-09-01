@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/spectroradiometer_qc.egg-info/PKG-INFO
+src/spectroradiometer_qc.egg-info/SOURCES.txt
+src/spectroradiometer_qc.egg-info/dependency_links.txt
+src/spectroradiometer_qc.egg-info/entry_points.txt
+src/spectroradiometer_qc.egg-info/requires.txt
+src/spectroradiometer_qc.egg-info/top_level.txt

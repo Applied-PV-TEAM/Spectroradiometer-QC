@@ -1,0 +1,2 @@
+[console_scripts]
+spectro-qc = spectroradiometer_qc.cli:main

@@ -4,3 +4,4 @@
 *.nc
 *login.txt
 *.parquet
+.qcvenv*

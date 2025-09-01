@@ -1,0 +1,179 @@
+Metadata-Version: 2.4
+Name: spectroradiometer-qc
+Version: 0.1.0
+Summary: Quality control tools for spectroradiometer data processing and analysis
+Author-email: Your Name <your.email@example.com>
+Maintainer-email: Your Name <your.email@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/spectroradiometer-qc
+Project-URL: Documentation, https://spectroradiometer-qc.readthedocs.io/
+Project-URL: Repository, https://github.com/yourusername/spectroradiometer-qc
+Project-URL: Bug Tracker, https://github.com/yourusername/spectroradiometer-qc/issues
+Keywords: spectroradiometer,quality-control,solar-radiation,atmospheric-science,data-processing
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Atmospheric Science
+Classifier: Topic :: Scientific/Engineering :: Physics
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=1.5.0
+Requires-Dist: numpy>=1.20.0
+Requires-Dist: pyarrow>=10.0.0
+Requires-Dist: pathlib2>=2.3.0; python_version < "3.4"
+Requires-Dist: matplotlib>3.9.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=22.0.0; extra == "dev"
+Requires-Dist: flake8>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: pre-commit>=2.20.0; extra == "dev"
+Provides-Extra: docs
+Requires-Dist: sphinx>=5.0.0; extra == "docs"
+Requires-Dist: sphinx-rtd-theme>=1.0.0; extra == "docs"
+Requires-Dist: myst-parser>=0.18.0; extra == "docs"
+Provides-Extra: viz
+Requires-Dist: matplotlib>=3.5.0; extra == "viz"
+Requires-Dist: seaborn>=0.11.0; extra == "viz"
+Requires-Dist: plotly>=5.0.0; extra == "viz"
+Provides-Extra: jupyter
+Requires-Dist: jupyter>=1.0.0; extra == "jupyter"
+Requires-Dist: ipykernel>=6.0.0; extra == "jupyter"
+Requires-Dist: ipywidgets>=8.0.0; extra == "jupyter"
+Provides-Extra: all
+Requires-Dist: spectroradiometer-qc[dev,docs,jupyter,viz]; extra == "all"
+
+# Spectroradiometer Quality Control
+
+A Python library for quality control and analysis of spectroradiometer data from various stations (DTU, WUT).
+
+## Features
+
+- 📊 **Data Loading**: Efficient loading of parquet files organized by station and month
+- 🔍 **Quality Control**: Comprehensive QC checks for spectroradiometer data
+- 🌤️ **SMARTS Integration**: Atmospheric modeling capabilities
+- 📈 **Visualization**: Tools for visualizing QC results and data
+
+## Installation
+
+### Install from local directory (development)
+
+```bash
+# Clone or navigate to the project directory
+cd /path/to/spectroradiometer-qc
+
+# Install in development mode
+pip install -e .
+
+# Or install with optional dependencies
+pip install -e .[dev,viz,jupyter]
+```
+
+### Install all dependencies
+
+```bash
+pip install -e .[all]
+```
+
+## Quick Start
+
+```python
+import spectroradiometer_qc as sqc
+
+# Load DTU data for June 2024
+data = sqc.load_parquet_data('DTU', 6, 2024)
+
+# Initialize quality control
+qc = sqc.SpectralQC(data, column_mapping={})
+
+# Run QC checks
+qc.greater_than_zero_check()
+qc.not_a_number_check()
+
+# Check available data
+available = sqc.get_available_data('DTU')
+print(f"Available DTU data: {len(available['DTU'])} months")
+```
+
+## Project Structure
+
+```
+spectroradiometer-qc/
+├── src/                          # Source code
+│   ├── __init__.py              # Package initialization
+│   ├── data_loader.py           # Data loading utilities
+│   ├── quality_control.py       # QC checks and SpectralQC class
+│   ├── SMARTS.py               # SMARTS atmospheric modeling
+│   ├── python_smarts.py        # SMARTS Python interface
+│   └── viualisation.py         # Visualization tools
+├── data/                        # Data files
+│   └── dtu_combined/           # DTU parquet files
+├── tests/                       # Test files (coming soon)
+├── pyproject.toml              # Project configuration
+└── README.md                   # This file
+```
+
+## Development
+
+### Dependencies
+
+Core dependencies:
+- `pandas` - Data manipulation and analysis
+- `numpy` - Numerical computing
+- `pyarrow` - Efficient parquet file handling
+
+Optional dependencies:
+- `matplotlib`, `seaborn`, `plotly` - Visualization
+- `jupyter` - Notebook support
+- `pytest` - Testing framework
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -e .[dev]
+
+# Run tests
+pytest
+
+# Format code
+black src/
+
+# Type checking
+mypy src/
+```
+
+## Data Format
+
+The library expects parquet files organized as:
+```
+data/{station}_combined/{STATION}_YYYY-MM-DD_to_YYYY-MM-DD.parquet
+```
+
+Example: `data/dtu_combined/DTU_2024-06-01_to_2024-06-30.parquet`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contact
+
+- **Author**: Your Name
+- **Email**: your.email@example.com
+- **Repository**: https://github.com/yourusername/spectroradiometer-qc
