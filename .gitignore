@@ -2,3 +2,5 @@
 *.ipynb
 *.h5
 *.nc
+*login.txt
+*.parquet

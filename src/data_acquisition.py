@@ -1,1 +1,0 @@
-# This may be hard to generalize as each station and data acquisition is set up quite differently
