@@ -1,0 +1,29 @@
+'Test' !Card 1
+0 !Card 2
+1013.25
+1 !Card 3
+'USSA' !Card 3a
+0 !Card 4
+1.42
+0 !Card 5
+0 0.34
+1 !Card 6
+370 !Card 7
+1 !Card 7a
+'S&F_RURAL'
+0
+0.084
+38 !Card 10
+0 !Card 10b
+280 4000 1 1366.1
+2 !Card 12
+280 4000 0.5 !Card 12a
+1
+2
+0 !Card 13
+1 !Card 14
+1 300 1100 0.5 7
+0 !Card 15
+0 !Card 16
+2 !Card 17
+1.5
