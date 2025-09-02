@@ -40,7 +40,31 @@ class SpectralQC:
     def less_than_am0_check(self): # jacob
         pass
 
-    def clearsky_broadband_check(self): # sergiu
+    def clearsky_broadband_check(self):  # sergiu
+        def is_within_whisker(x_val, y_val, whisker_values):
+            for interval in whisker_values:
+                i, i_plus_1, lower_whisker, upper_whisker = interval
+                if i <= x_val < i_plus_1:
+                    if lower_whisker <= y_val <= upper_whisker:
+                        return True
+            return False
+
+        # Load whisker values from CSV file
+        whisker_values = pd.read_csv("AOD_limits_550nm.csv").values.tolist()
+
+        # Apply the check
+        self.flags['broadband_check'] = self.data.apply(
+            lambda row: is_within_whisker(
+                row['Airmass'] * row['AOD'],
+                row['Integrated DNI'] / row['DNI broadband'],
+                whisker_values
+            ),
+            axis=1
+        )
+
+        # Calculate fraction of data passing the check
+        self.fractions['broadband_check'] = self.flags['broadband_check'].mean()
+        print(f"Fraction of data passing broadband check: {self.fractions['broadband_check']:.3f}")
         pass
 
     def smarts_check(self, smarts_data: pd.DataFrame): # sergiu
