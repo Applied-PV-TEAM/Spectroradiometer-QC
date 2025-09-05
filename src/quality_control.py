@@ -54,6 +54,13 @@ class SpectralQC:
         # Quick check for 'Clear sky' values
         if 'Clear sky' not in self.data.columns:
             raise ValueError("'Clear sky' column not found in the data")
+        # Quick check for 'DNI' and 'DNI integrated' values
+        if 'DNI' not in self.data.columns or 'Integrated DNI' not in self.data.columns:
+            raise ValueError("'DNI' or 'Integrated DNI' column not found in the data")
+
+        # Check if 'DNI' and 'DNI integrated' are float values
+        if not pd.api.types.is_float_dtype(self.data['DNI']) or not pd.api.types.is_float_dtype(self.data['Integrated DNI']):
+            raise ValueError("'DNI' or 'Integrated DNI' column is not of float type")
 
         # Filter data for 'Clear sky' equal to 1, air mass <= 10, and AOD <= 2.5
         clear_sky_data = self.data[
