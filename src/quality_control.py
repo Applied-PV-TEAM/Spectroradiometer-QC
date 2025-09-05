@@ -47,24 +47,52 @@ class SpectralQC:
                 if i <= x_val < i_plus_1:
                     if lower_whisker <= y_val <= upper_whisker:
                         return True
+                    else:
+                        return False
             return False
+
+        # Quick check for 'Clear sky' values
+        if 'Clear sky' not in self.data.columns:
+            raise ValueError("'Clear sky' column not found in the data")
+
+        # Filter data for 'Clear sky' equal to 1, air mass <= 10, and AOD <= 2.5
+        clear_sky_data = self.data[
+            (self.data['Clear sky'] == 1) &
+            (self.data['Airmass'] <= 10) &
+            (self.data['AOD'] <= 2.5)
+        ]
+
+        # Calculate fraction of data with 'Clear sky' equal to 1, air mass <= 10, and AOD <= 2.5
+        clear_sky_fraction = len(clear_sky_data) / len(self.data)
+        print(f"Fraction of data with 'Clear sky' equal to 1, air mass <= 10, and AOD <= 2.5: {clear_sky_fraction:.3f}")
+
+        if clear_sky_data.empty:
+            print("Warning: No data points meet the criteria: 'Clear sky' equal to 1, air mass <= 10, and AOD <= 2.5")
+            self.flags['broadband_check'] = pd.Series([False] * len(self.data), index=self.data.index)
+            self.fractions['broadband_check'] = 0.0
+            print(f"Fraction of clear sky data passing broadband check: {self.fractions['broadband_check']:.3f}")
+            return
 
         # Load whisker values from CSV file
         whisker_values = pd.read_csv("AOD_limits_550nm.csv").values.tolist()
 
-        # Apply the check
-        self.flags['broadband_check'] = self.data.apply(
+        # Apply the check only to clear sky data
+        broadband_check = clear_sky_data.apply(
             lambda row: is_within_whisker(
                 row['Airmass'] * row['AOD'],
-                row['Integrated DNI'] / row['DNI broadband'],
+                row['Integrated DNI'] / row['DNI'],
                 whisker_values
             ),
             axis=1
         )
 
-        # Calculate fraction of data passing the check
-        self.fractions['broadband_check'] = self.flags['broadband_check'].mean()
-        print(f"Fraction of data passing broadband check: {self.fractions['broadband_check']:.3f}")
+        # Create a Series for the entire dataset with False for non-clear sky data
+        self.flags['broadband_check'] = pd.Series([False] * len(self.data), index=self.data.index)
+        self.flags['broadband_check'].update(broadband_check)
+
+        # Calculate fraction of clear sky data passing the check
+        self.fractions['broadband_check'] = 1-broadband_check.mean()
+        print(f"Fraction of clear sky data not passing broadband check: {self.fractions['broadband_check']:.3f}")
         pass
 
     def smarts_check(self, smarts_data: pd.DataFrame): # sergiu
