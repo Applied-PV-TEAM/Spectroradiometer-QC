@@ -1,7 +1,7 @@
 # Here goes all the actual functions that saves flags for each QC check
 import pandas as pd
 from pprint import pprint
-
+from SMARTS import create_run_smarts_input_file_dni
 
 class SpectralQC:
     def __init__(self,data: pd.DataFrame, column_mapping: dict) -> None:
