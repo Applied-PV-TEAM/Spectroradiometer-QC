@@ -48,9 +48,29 @@ class SpectralQC:
         print(f"Fraction of data passing not a number check: {self.fractions['not_a_number']:.3f}")
 
     def less_than_am0_check(self): # jacob
-        pass
+        self.flags['less_than_am0'] = self.data['Integrated DNI']>=1001.2785
+        self.fractions['less_than_am0'] = self.flags['less_than_am0'].mean()
+        print(f"Fraction of data flagged during the less than AM0 check: {self.fractions['less_than_am0']:.3f}")
 
     def clearsky_broadband_check(self):  # sergiu
+        dni_type_check = pd.api.types.is_float_dtype(self.data['DNI']) if 'DNI' in self.data.columns else False
+
+        if not dni_type_check:
+        # Set flags and fractions to pass the check if DNI columns are not floats
+            self.flags['broadband_check'] = pd.Series([True] * len(self.data), index=self.data.index)
+            self.fractions['broadband_check'] = 0.0
+            print("Broadband check not usable. Data does not have measured DNI columns of float types.")
+            return
+        def is_within_whisker(x_val, y_val, whisker_values):
+            for interval in whisker_values:
+                i, i_plus_1, lower_whisker, upper_whisker = interval
+                if i <= x_val < i_plus_1:
+                    if (lower_whisker > y_val) | (y_val> upper_whisker):
+                        return True
+                    else:
+                        return False
+            return False
+
         # Quick check for 'Clear sky' values
         if 'Clear sky' not in self.data.columns:
             raise ValueError("'Clear sky' column not found in the data")
@@ -94,10 +114,23 @@ class SpectralQC:
             self.flags['broadband_check'] = pd.Series([False] * len(self.data), index=self.data.index)
             self.flags['broadband_check'].update(broadband_check)
 
-            # Calculate fraction of clear sky data passing the check
-            self.fractions['broadband_check'] = 1-broadband_check.mean()
-            
-        print(f"Fraction of clear sky data not passing broadband check: {self.fractions['broadband_check']:.3f}")
+        # Apply the check only to clear sky data
+        broadband_check = clear_sky_data.apply(
+            lambda row: is_within_whisker(
+                row['Airmass'] * row['AOD'],
+                row['Integrated DNI'] / row['DNI'],
+                whisker_values
+            ),
+            axis=1
+        )
+
+        # Create a Series for the entire dataset with False for non-clear sky data
+        self.flags['broadband_check'] = pd.Series([False] * len(self.data), index=self.data.index)
+        self.flags['broadband_check'].update(broadband_check)
+
+        # Calculate fraction of clear sky data passing the check
+        self.fractions['broadband_check'] = broadband_check.mean()
+        print(f"Fraction of clear sky data flagged during the broadband check: {self.fractions['broadband_check']:.3f}")
 
     def smarts_check(self, smarts_data: pd.DataFrame): # sergiu
         pass
