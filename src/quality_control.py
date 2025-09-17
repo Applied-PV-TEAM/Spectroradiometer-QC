@@ -3,6 +3,16 @@ import pandas as pd
 from pprint import pprint
 from SMARTS import create_run_smarts_input_file_dni
 
+def is_within_whisker(x_val, y_val, whisker_values):
+    for interval in whisker_values:
+        i, i_plus_1, lower_whisker, upper_whisker = interval
+        if i <= x_val < i_plus_1:
+            if lower_whisker <= y_val <= upper_whisker:
+                return True
+            else:
+                return False
+    return False
+
 class SpectralQC:
     def __init__(self,data: pd.DataFrame, column_mapping: dict) -> None:
         
@@ -41,16 +51,6 @@ class SpectralQC:
         pass
 
     def clearsky_broadband_check(self):  # sergiu
-        def is_within_whisker(x_val, y_val, whisker_values):
-            for interval in whisker_values:
-                i, i_plus_1, lower_whisker, upper_whisker = interval
-                if i <= x_val < i_plus_1:
-                    if lower_whisker <= y_val <= upper_whisker:
-                        return True
-                    else:
-                        return False
-            return False
-
         # Quick check for 'Clear sky' values
         if 'Clear sky' not in self.data.columns:
             raise ValueError("'Clear sky' column not found in the data")
