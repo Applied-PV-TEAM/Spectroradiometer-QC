@@ -121,6 +121,6 @@ MIT License - see LICENSE file for details.
 
 ## Contact
 
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **Repository**: https://github.com/yourusername/spectroradiometer-qc
+- **Author**: Sergiu Hategan, Jacob Thorning
+- **Email**: sergiu.hategan98@e-uvt.ro, jkrtho@dtu.dk
+- **Repository**: [https://github.com/yourusername/spectroradiometer-qc](https://github.com/Applied-PV-TEAM/Spectroradiometer-QC)
